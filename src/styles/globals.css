@@ -163,3 +163,21 @@ html.lenis {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
+/* Infinite Marquee Fading Mask */
+.mask-marquee {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 0, 0, 1) 15%,
+    rgba(0, 0, 0, 1) 85%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 0, 0, 1) 15%,
+    rgba(0, 0, 0, 1) 85%,
+    transparent
+  );
+}

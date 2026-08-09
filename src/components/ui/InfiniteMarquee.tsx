@@ -39,26 +39,6 @@ export default function InfiniteMarquee({
         <div className="flex items-center gap-6">{children}</div>
         <div className="flex items-center gap-6">{children}</div>
       </motion.div>
-
-      {/* Styled inline mask to fade out the edges for premium glass feels */}
-      <style jsx global>{`
-        .mask-marquee {
-          mask-image: linear-gradient(
-            to right,
-            transparent,
-            rgba(0, 0, 0, 1) 15%,
-            rgba(0, 0, 0, 1) 85%,
-            transparent
-          );
-          -webkit-mask-image: linear-gradient(
-            to right,
-            transparent,
-            rgba(0, 0, 0, 1) 15%,
-            rgba(0, 0, 0, 1) 85%,
-            transparent
-          );
-        }
-      `}</style>
     </div>
   );
 }
