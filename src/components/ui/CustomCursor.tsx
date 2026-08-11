@@ -91,6 +91,7 @@ export default function CustomCursor() {
           scale: hovered ? 1.8 : clicked ? 0.8 : 1,
           backgroundColor: hovered ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0)",
           borderColor: hovered ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.25)",
+          opacity: isVisible ? 1 : 0,
         }}
         transition={{ type: "tween", duration: 0.15 }}
       />
@@ -106,6 +107,7 @@ export default function CustomCursor() {
         }}
         animate={{
           scale: hovered ? 0.3 : clicked ? 1.5 : 1,
+          opacity: isVisible ? 1 : 0,
         }}
         transition={{ type: "tween", duration: 0.1 }}
       />

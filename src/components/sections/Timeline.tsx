@@ -57,7 +57,7 @@ export default function Timeline() {
         <div className="mb-16">
           <div className="flex items-center gap-3 -ml-[31px] md:-ml-[43px] mb-8 z-10 relative">
             <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#030303] border border-white/20 flex items-center justify-center text-white/80">
-              <Briefcase className="w-3.5 h-3.5 md:w-4.5 md:h-4.5" />
+              <Briefcase className="w-3.5 h-3.5 md:w-4 h-4" />
             </div>
             <h3 className="font-display font-bold text-xl md:text-2xl text-white">Work Experience</h3>
           </div>
@@ -113,7 +113,7 @@ export default function Timeline() {
         <div>
           <div className="flex items-center gap-3 -ml-[31px] md:-ml-[43px] mb-8 z-10 relative">
             <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#030303] border border-white/20 flex items-center justify-center text-white/80">
-              <GraduationCap className="w-3.5 h-3.5 md:w-4.5 md:h-4.5" />
+              <GraduationCap className="w-3.5 h-3.5 md:w-4 h-4" />
             </div>
             <h3 className="font-display font-bold text-xl md:text-2xl text-white">Education</h3>
           </div>

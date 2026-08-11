@@ -1,10 +1,25 @@
 import type { Metadata } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "@/styles/globals.css";
 import ScrollProvider from "@/components/layout/ScrollProvider";
 import CanvasBackground from "@/components/ui/CanvasBackground";
 import CustomCursor from "@/components/ui/CustomCursor";
 import CommandPalette from "@/components/ui/CommandPalette";
 import { portfolioConfig } from "@/config/portfolio";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: `${portfolioConfig.personalInfo.name} | ${portfolioConfig.personalInfo.title}`,
@@ -40,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className={`scroll-smooth ${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="bg-background text-foreground antialiased selection:bg-brand-blue selection:text-white min-h-screen flex flex-col">
         {/* Grain overlay for luxury visual texture */}
         <div className="noise-overlay" />

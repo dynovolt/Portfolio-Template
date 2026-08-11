@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { portfolioConfig } from "@/config/portfolio";
@@ -15,6 +16,8 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [activeSection, setActiveSection] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -31,6 +34,8 @@ export default function Navbar() {
 
   // Monitor intersection of sections to update active states
   useEffect(() => {
+    if (!isHome) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -48,7 +53,7 @@ export default function Navbar() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [isHome]);
 
   return (
     <>
@@ -62,7 +67,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           {/* Logo / Brand */}
-          <a href="#" className="flex items-center gap-2 group">
+          <a href={isHome ? "#hero" : "/"} className="flex items-center gap-2 group">
             <span className="font-display font-bold text-xl tracking-tight relative overflow-hidden">
               <span className="inline-block transition-transform duration-300 group-hover:-translate-y-full">
                 {portfolioConfig.personalInfo.name}
@@ -80,7 +85,7 @@ export default function Navbar() {
               return (
                 <a
                   key={link.href}
-                  href={link.href}
+                  href={isHome ? link.href : `/${link.href}`}
                   className="relative px-4 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors duration-200"
                 >
                   {isActive && (
@@ -100,7 +105,7 @@ export default function Navbar() {
           <div className="hidden md:block">
             <Magnetic range={50}>
               <a
-                href="#contact"
+                href={isHome ? "#contact" : "/#contact"}
                 className="flex items-center gap-1 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-black bg-white rounded-full hover:bg-white/90 transition-colors"
               >
                 <span>Hire Me</span>
@@ -140,7 +145,7 @@ export default function Navbar() {
                   exit={{ opacity: 0, x: -30 }}
                   transition={{ delay: idx * 0.05, duration: 0.4 }}
                   key={link.href}
-                  href={link.href}
+                  href={isHome ? link.href : `/${link.href}`}
                   onClick={() => setMobileMenuOpen(false)}
                   className="font-display font-semibold text-3xl hover:text-brand-blue transition-colors text-white"
                 >

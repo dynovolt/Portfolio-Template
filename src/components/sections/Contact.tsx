@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { motion } from "react-hook-form"; // Wait, we don't have react-hook-form, we will write a standard native React controlled form to keep dependencies light and bulletproof!
 import { motion as motionElement } from "framer-motion";
 import { Mail, MapPin, Send, CheckCircle2 } from "lucide-react";
 import { portfolioConfig } from "@/config/portfolio";

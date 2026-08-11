@@ -13,14 +13,25 @@ export default function CanvasBackground() {
     if (!ctx) return;
 
     let animationFrameId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    
+    // Scale for high-DPI (Retina) displays
+    const scale = window.devicePixelRatio || 1;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    ctx.scale(scale, scale);
 
     // Mouse coordinates (scaled to device pixel ratio)
     const mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000, radius: 220 };
 
+    // Mobile performance tuning: reduce particles & expand grid size
+    const isMobile = width < 768;
+    const particleCount = isMobile ? 15 : 45;
+    const gridSize = isMobile ? 80 : 50;
+
     // Set up particles
-    const particleCount = 45;
     const particles: Array<{
       x: number;
       y: number;
@@ -44,14 +55,19 @@ export default function CanvasBackground() {
     }
 
     // Grid details
-    const gridSize = 50;
-    const gridCols = Math.ceil(width / gridSize) + 1;
-    const gridRows = Math.ceil(height / gridSize) + 1;
+    let gridCols = Math.ceil(width / gridSize) + 1;
+    let gridRows = Math.ceil(height / gridSize) + 1;
 
     // Track resizing
     const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      ctx.scale(scale, scale);
+      
+      gridCols = Math.ceil(width / gridSize) + 1;
+      gridRows = Math.ceil(height / gridSize) + 1;
     };
     window.addEventListener("resize", handleResize);
 

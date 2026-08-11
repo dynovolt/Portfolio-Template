@@ -13,14 +13,19 @@ export default function ScrambleText({
 }) {
   const [displayedText, setDisplayedText] = useState(text);
   const isAnimating = useRef(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const chars = "!@#$%^&*()_+{}[];:<>?,./~1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   const scramble = () => {
     if (isAnimating.current) return;
     isAnimating.current = true;
 
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
     let iterations = 0;
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setDisplayedText((prev) =>
         text
           .split("")
@@ -36,7 +41,10 @@ export default function ScrambleText({
 
       if (iterations >= text.length) {
         isAnimating.current = false;
-        clearInterval(interval);
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
       }
 
       iterations += 1 / 3; // Controls speed of resolution
@@ -47,6 +55,11 @@ export default function ScrambleText({
     if (triggerOn === "mount") {
       scramble();
     }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, triggerOn]);
 

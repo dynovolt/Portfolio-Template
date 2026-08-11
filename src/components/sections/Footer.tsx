@@ -1,11 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowUp, Github, Linkedin, Twitter, Mail } from "lucide-react";
 import { portfolioConfig } from "@/config/portfolio";
 import Magnetic from "../ui/Magnetic";
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const { name, socials } = portfolioConfig.personalInfo;
 
   const scrollToTop = () => {
@@ -29,10 +32,10 @@ export default function Footer() {
           <div className="md:col-span-3 flex flex-col gap-3">
             <span className="text-[10px] font-bold uppercase tracking-wider text-white/30">Navigation</span>
             <div className="flex flex-col gap-2.5 text-sm font-medium">
-              <a href="#about" className="text-white/60 hover:text-white transition-colors w-fit">About</a>
-              <a href="#projects" className="text-white/60 hover:text-white transition-colors w-fit">Projects</a>
-              <a href="#timeline" className="text-white/60 hover:text-white transition-colors w-fit">Timeline</a>
-              <a href="#blog" className="text-white/60 hover:text-white transition-colors w-fit">Blog</a>
+              <a href={isHome ? "#about" : "/#about"} className="text-white/60 hover:text-white transition-colors w-fit">About</a>
+              <a href={isHome ? "#projects" : "/#projects"} className="text-white/60 hover:text-white transition-colors w-fit">Projects</a>
+              <a href={isHome ? "#timeline" : "/#timeline"} className="text-white/60 hover:text-white transition-colors w-fit">Timeline</a>
+              <a href={isHome ? "#blog" : "/#blog"} className="text-white/60 hover:text-white transition-colors w-fit">Blog</a>
             </div>
           </div>
 

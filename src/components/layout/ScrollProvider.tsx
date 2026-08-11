@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, createContext, useContext, useRef } from "react";
+import { useEffect, useState, createContext, useContext } from "react";
 import Lenis from "lenis";
 
 const ScrollContext = createContext<{ lenis: Lenis | null }>({ lenis: null });
 
-export const useScroll = () => useContext(ScrollContext);
+export const useLenis = () => useContext(ScrollContext);
 
 export default function ScrollProvider({ children }: { children: React.ReactNode }) {
-  const lenisRef = useRef<Lenis | null>(null);
+  const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
     // Initialize Lenis
@@ -22,7 +22,7 @@ export default function ScrollProvider({ children }: { children: React.ReactNode
       touchMultiplier: 1.5,
     });
 
-    lenisRef.current = lenisInstance;
+    setLenis(lenisInstance);
 
     // Handle scroll frames
     let rafId: number;
@@ -57,7 +57,7 @@ export default function ScrollProvider({ children }: { children: React.ReactNode
   }, []);
 
   return (
-    <ScrollContext.Provider value={{ lenis: lenisRef.current }}>
+    <ScrollContext.Provider value={{ lenis }}>
       {children}
     </ScrollContext.Provider>
   );

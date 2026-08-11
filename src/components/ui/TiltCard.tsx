@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion";
 
 export default function TiltCard({
   children,
@@ -30,6 +30,7 @@ export default function TiltCard({
   // Transform for cursor spotlight position on the card surface
   const spotlightX = useTransform(springX, [0, 1], ["0%", "100%"]);
   const spotlightY = useTransform(springY, [0, 1], ["0%", "100%"]);
+  const spotlightBg = useMotionTemplate`radial-gradient(400px circle at ${spotlightX} ${spotlightY}, rgba(79, 126, 255, 0.08), transparent 80%)`;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -85,7 +86,7 @@ export default function TiltCard({
       <motion.div
         className="absolute inset-0 pointer-events-none transition-opacity duration-300 mix-blend-screen z-10"
         style={{
-          background: `radial-gradient(400px circle at ${spotlightX.get()} ${spotlightY.get()}, rgba(79, 126, 255, 0.08), transparent 80%)`,
+          background: spotlightBg,
           opacity: hovered ? 1 : 0,
         }}
       />

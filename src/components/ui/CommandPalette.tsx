@@ -1,13 +1,18 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Hash, ArrowRight, CornerDownLeft, Sparkles, Folder, FileText, User } from "lucide-react";
 import { portfolioConfig } from "@/config/portfolio";
+import { useLenis } from "@/components/layout/ScrollProvider";
 
 export default function CommandPalette() {
   const router = useRouter();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const { lenis } = useLenis();
+  
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -50,10 +55,17 @@ export default function CommandPalette() {
 
   const scrollToSection = (id: string) => {
     setIsOpen(false);
-    const element = document.querySelector(id);
-    if (element) {
-      // Find Lenis or scroll natively
-      element.scrollIntoView({ behavior: "smooth" });
+    if (isHome) {
+      const element = document.querySelector(id);
+      if (element) {
+        if (lenis) {
+          lenis.scrollTo(element, { offset: -80 });
+        } else {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    } else {
+      router.push(`/${id}`);
     }
   };
 
