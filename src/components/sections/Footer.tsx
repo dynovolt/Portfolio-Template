@@ -85,15 +85,30 @@ export default function Footer() {
         </div>
 
         {/* Dynamic Massive Typo Branding Accent (Apple/Framer/Vercel style footer branding) */}
-        <div className="relative select-none pointer-events-none overflow-hidden h-24 md:h-44 flex items-center justify-center">
+        <div className="relative select-none overflow-hidden h-24 md:h-44 flex items-center justify-center cursor-default">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 0.03, y: 0 }}
+            whileInView={{ opacity: 0.06, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display font-extrabold text-[8rem] md:text-[18rem] text-white tracking-tighter uppercase leading-none whitespace-nowrap absolute"
+            className="font-display font-extrabold text-[5rem] sm:text-[8rem] md:text-[14rem] lg:text-[16rem] text-white tracking-tighter uppercase leading-none whitespace-nowrap absolute flex"
           >
-            {name}
+            {name.split("").map((char, index) => (
+              <motion.span
+                key={index}
+                className="inline-block transition-colors hover:text-brand-blue"
+                whileHover={{
+                  scale: 1.15,
+                  y: -15,
+                  rotate: Math.random() > 0.5 ? 6 : -6,
+                  color: "#4F7EFF",
+                  textShadow: "0 0 40px rgba(79, 126, 255, 0.8)",
+                }}
+                transition={{ type: "spring", stiffness: 350, damping: 10 }}
+              >
+                {char === " " ? "\u00A0" : char}
+              </motion.span>
+            ))}
           </motion.div>
         </div>
 
