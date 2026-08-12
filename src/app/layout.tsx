@@ -5,6 +5,7 @@ import ScrollProvider from "@/components/layout/ScrollProvider";
 import CanvasBackground from "@/components/ui/CanvasBackground";
 import CustomCursor from "@/components/ui/CustomCursor";
 import CommandPalette from "@/components/ui/CommandPalette";
+import HUDTelemetry from "@/components/ui/HUDTelemetry";
 import { portfolioConfig } from "@/config/portfolio";
 
 const inter = Inter({
@@ -62,6 +63,9 @@ export default function RootLayout({
         
         {/* Particle and warped coordinate grid backdrop */}
         <CanvasBackground />
+
+        {/* Dynamic Telemetry HUD overlay */}
+        <HUDTelemetry />
         
         {/* Interactive Mouse Follower */}
         <CustomCursor />

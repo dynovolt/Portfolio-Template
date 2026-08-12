@@ -1,6 +1,4 @@
-"use client";
-
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { portfolioConfig } from "@/config/portfolio";
 import Magnetic from "../ui/Magnetic";
@@ -8,6 +6,11 @@ import ScrambleText from "../ui/ScrambleText";
 
 export default function Hero() {
   const { greeting, title, subtitle } = portfolioConfig.personalInfo;
+  
+  const { scrollY } = useScroll();
+  const yContent = useTransform(scrollY, [0, 600], [0, 120]);
+  const opacityContent = useTransform(scrollY, [0, 500], [1, 0]);
+  const yOrb = useTransform(scrollY, [0, 600], [0, -120]);
 
   return (
     <section
@@ -15,9 +18,15 @@ export default function Hero() {
       className="relative min-h-screen w-full flex flex-col justify-center items-center px-6 md:px-12 overflow-hidden py-24 md:py-0"
     >
       {/* Subtle glow orb */}
-      <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-brand-blue/10 blur-[120px] pointer-events-none -z-10 animate-pulse-slow" />
+      <motion.div 
+        style={{ y: yOrb }}
+        className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-brand-blue/10 blur-[120px] pointer-events-none -z-10 animate-pulse-slow" 
+      />
 
-      <div className="max-w-4xl w-full text-center flex flex-col items-center gap-8 md:gap-10">
+      <motion.div 
+        style={{ y: yContent, opacity: opacityContent }}
+        className="max-w-4xl w-full text-center flex flex-col items-center gap-8 md:gap-10"
+      >
         {/* Animated Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -86,7 +95,7 @@ export default function Hero() {
             </a>
           </Magnetic>
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* Floating Scroll Indicator */}
       <motion.div

@@ -7,6 +7,7 @@ import { Github, ExternalLink, ArrowRight } from "lucide-react";
 import { portfolioConfig, Project } from "@/config/portfolio";
 import TiltCard from "../ui/TiltCard";
 import Magnetic from "../ui/Magnetic";
+import ScrollReveal from "../ui/ScrollReveal";
 
 export default function Projects() {
   const router = useRouter();
@@ -16,39 +17,29 @@ export default function Projects() {
     <section id="projects" className="relative py-20 md:py-28 px-6 md:px-12 max-w-7xl mx-auto w-full">
       {/* Title */}
       <div className="flex flex-col gap-4 mb-16 md:mb-20">
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-3"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-brand-blue font-mono">04 / Projects</span>
-        </motion.div>
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight"
-        >
-          Selected Creations
-        </motion.h2>
+        <ScrollReveal variant="fade-up">
+          <div className="flex items-center gap-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-brand-blue font-mono">04 / Projects</span>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal variant="clip-wipe" delay={0.1}>
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight">
+            Selected Creations
+          </h2>
+        </ScrollReveal>
       </div>
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {projects.map((project, idx) => (
-          <motion.div
+          <ScrollReveal
             key={project.slug}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            variant="perspective-3d"
+            delay={idx * 0.15}
           >
             <ProjectCard project={project} onClick={() => router.push(`/projects/${project.slug}`)} />
-          </motion.div>
+          </ScrollReveal>
         ))}
       </div>
     </section>

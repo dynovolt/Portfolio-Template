@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Briefcase, GraduationCap } from "lucide-react";
 import { portfolioConfig } from "@/config/portfolio";
+import ScrollReveal from "../ui/ScrollReveal";
 
 export default function Timeline() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,25 +23,17 @@ export default function Timeline() {
     <section id="timeline" className="relative py-20 md:py-28 px-6 md:px-12 max-w-5xl mx-auto w-full">
       {/* Section Title */}
       <div className="flex flex-col gap-4 mb-16 md:mb-20">
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-3"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
-          <span className="text-xs font-semibold uppercase tracking-wider text-brand-blue font-mono">03 / Experience &amp; Education</span>
-        </motion.div>
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight"
-        >
-          My Journey
-        </motion.h2>
+        <ScrollReveal variant="fade-up">
+          <div className="flex items-center gap-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-blue" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-brand-blue font-mono">03 / Experience &amp; Education</span>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal variant="clip-wipe" delay={0.1}>
+          <h2 className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight">
+            My Journey
+          </h2>
+        </ScrollReveal>
       </div>
 
       <div ref={containerRef} className="relative pl-6 md:pl-10 ml-2 md:ml-4">
@@ -64,12 +57,10 @@ export default function Timeline() {
 
           <div className="flex flex-col gap-12">
             {experiences.map((exp, idx) => (
-              <motion.div
+              <ScrollReveal
                 key={`${exp.company}-${exp.role}`}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                variant="clip-wipe"
+                delay={idx * 0.1}
                 className="relative"
               >
                 {/* Timeline node point */}
@@ -104,7 +95,7 @@ export default function Timeline() {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -120,12 +111,10 @@ export default function Timeline() {
 
           <div className="flex flex-col gap-12">
             {education.map((edu, idx) => (
-              <motion.div
+              <ScrollReveal
                 key={edu.institution}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                variant="clip-wipe"
+                delay={idx * 0.1}
                 className="relative"
               >
                 {/* Timeline node point */}
@@ -146,7 +135,7 @@ export default function Timeline() {
                     <li key={bIdx}>{bullet}</li>
                   ))}
                 </ul>
-              </motion.div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
