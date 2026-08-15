@@ -36,7 +36,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
-        display: ["var(--font-space-grotesk)", "sans-serif"],
+        display: ["var(--font-cormorant-garamond)", "serif"],
+        mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

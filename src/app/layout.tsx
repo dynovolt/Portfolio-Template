@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import ScrollProvider from "@/components/layout/ScrollProvider";
 import CanvasBackground from "@/components/ui/CanvasBackground";
@@ -15,10 +15,18 @@ const inter = Inter({
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant-garamond",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -56,7 +64,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`scroll-smooth ${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" className={`scroll-smooth ${inter.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}>
       <body className="bg-background text-foreground antialiased selection:bg-brand-blue selection:text-white min-h-screen flex flex-col">
         {/* Grain overlay for luxury visual texture */}
         <div className="noise-overlay" />
