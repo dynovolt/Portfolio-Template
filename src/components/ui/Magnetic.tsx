@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 
 export default function Magnetic({
@@ -14,6 +14,7 @@ export default function Magnetic({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const rectRef = useRef<DOMRect | null>(null);
 
   // Position motion values
   const x = useMotionValue(0);
@@ -24,10 +25,24 @@ export default function Magnetic({
   const springX = useSpring(x, springConfig);
   const springY = useSpring(y, springConfig);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      rectRef.current = null;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
+    if (!rectRef.current) {
+      if (ref.current) {
+        rectRef.current = ref.current.getBoundingClientRect();
+      } else {
+        return;
+      }
+    }
     const { clientX, clientY } = e;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const { left, top, width, height } = rectRef.current;
     const centerX = left + width / 2;
     const centerY = top + height / 2;
 
@@ -48,6 +63,7 @@ export default function Magnetic({
 
   const handleMouseLeave = () => {
     setIsHovered(false);
+    rectRef.current = null;
     x.set(0);
     y.set(0);
   };

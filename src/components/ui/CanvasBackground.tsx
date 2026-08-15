@@ -58,6 +58,34 @@ export default function CanvasBackground() {
     let gridCols = Math.ceil(width / gridSize) + 1;
     let gridRows = Math.ceil(height / gridSize) + 1;
 
+    // Pre-allocated grid points cache to avoid layout thrashing and GC overhead
+    interface GridPoint {
+      origX: number;
+      origY: number;
+      drawX: number;
+      drawY: number;
+      force: number;
+    }
+    
+    let points: GridPoint[] = [];
+
+    const initPoints = () => {
+      points = [];
+      for (let c = 0; c < gridCols; c++) {
+        for (let r = 0; r < gridRows; r++) {
+          points.push({
+            origX: c * gridSize,
+            origY: r * gridSize,
+            drawX: c * gridSize,
+            drawY: r * gridSize,
+            force: 0,
+          });
+        }
+      }
+    };
+
+    initPoints();
+
     // Track resizing
     const handleResize = () => {
       width = window.innerWidth;
@@ -68,6 +96,7 @@ export default function CanvasBackground() {
       
       gridCols = Math.ceil(width / gridSize) + 1;
       gridRows = Math.ceil(height / gridSize) + 1;
+      initPoints();
     };
     window.addEventListener("resize", handleResize);
 
@@ -113,107 +142,94 @@ export default function CanvasBackground() {
       ctx.arc(blob2X, blob2Y, 450, 0, Math.PI * 2);
       ctx.fill();
 
-      // 2. Draw Math-based Warp Grid
+      // Update grid point warp coordinates using distance-squared filtering
+      const radiusSq = mouse.radius * mouse.radius;
+      const mouseRadius = mouse.radius;
+      const mX = mouse.x;
+      const mY = mouse.y;
+
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        const dx = p.origX - mX;
+        const dy = p.origY - mY;
+        const distSq = dx * dx + dy * dy;
+
+        if (distSq < radiusSq) {
+          const dist = Math.sqrt(distSq);
+          const force = (mouseRadius - dist) / mouseRadius;
+          const angle = Math.atan2(dy, dx);
+          p.drawX = p.origX + Math.cos(angle) * force * 15;
+          p.drawY = p.origY + Math.sin(angle) * force * 15;
+          p.force = force;
+        } else {
+          p.drawX = p.origX;
+          p.drawY = p.origY;
+          p.force = 0;
+        }
+      }
+
+      // 2. Draw Math-based Warp Grid (Batched Lines drawing)
       ctx.strokeStyle = "rgba(255, 255, 255, 0.035)";
       ctx.lineWidth = 1;
 
+      // Draw all vertical column lines in one batch
+      ctx.beginPath();
       for (let c = 0; c < gridCols; c++) {
-        ctx.beginPath();
-        for (let r = 0; r < gridRows; r++) {
-          const origX = c * gridSize;
-          const origY = r * gridSize;
-
-          // Compute distance to mouse
-          const dx = origX - mouse.x;
-          const dy = origY - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          let drawX = origX;
-          let drawY = origY;
-
-          // Grid warp formula (push vectors away slightly based on distance)
-          if (dist < mouse.radius) {
-            const force = (mouse.radius - dist) / mouse.radius;
-            // Distort away from mouse
-            const angle = Math.atan2(dy, dx);
-            drawX += Math.cos(angle) * force * 15;
-            drawY += Math.sin(angle) * force * 15;
-          }
-
-          if (r === 0) {
-            ctx.moveTo(drawX, drawY);
-          } else {
-            ctx.lineTo(drawX, drawY);
+        const startIdx = c * gridRows;
+        if (startIdx < points.length) {
+          ctx.moveTo(points[startIdx].drawX, points[startIdx].drawY);
+          for (let r = 1; r < gridRows; r++) {
+            const idx = startIdx + r;
+            if (idx < points.length) {
+              ctx.lineTo(points[idx].drawX, points[idx].drawY);
+            }
           }
         }
-        ctx.stroke();
       }
+      ctx.stroke();
 
+      // Draw all horizontal row lines in one batch
+      ctx.beginPath();
       for (let r = 0; r < gridRows; r++) {
-        ctx.beginPath();
-        for (let c = 0; c < gridCols; c++) {
-          const origX = c * gridSize;
-          const origY = r * gridSize;
-
-          // Compute distance to mouse
-          const dx = origX - mouse.x;
-          const dy = origY - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          let drawX = origX;
-          let drawY = origY;
-
-          if (dist < mouse.radius) {
-            const force = (mouse.radius - dist) / mouse.radius;
-            const angle = Math.atan2(dy, dx);
-            drawX += Math.cos(angle) * force * 15;
-            drawY += Math.sin(angle) * force * 15;
-          }
-
-          if (c === 0) {
-            ctx.moveTo(drawX, drawY);
-          } else {
-            ctx.lineTo(drawX, drawY);
+        if (r < points.length) {
+          ctx.moveTo(points[r].drawX, points[r].drawY);
+          for (let c = 1; c < gridCols; c++) {
+            const idx = c * gridRows + r;
+            if (idx < points.length) {
+              ctx.lineTo(points[idx].drawX, points[idx].drawY);
+            }
           }
         }
-        ctx.stroke();
       }
+      ctx.stroke();
 
-      // 3. Draw grid dots with cursor hover highlighting
-      for (let c = 0; c < gridCols; c++) {
-        for (let r = 0; r < gridRows; r++) {
-          const origX = c * gridSize;
-          const origY = r * gridSize;
+      // 3. Draw grid dots with batched rendering
+      // Batch draw standard/unwarped dots to save 90%+ of fill/stroke calls
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.05)";
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        if (p.force === 0) {
+          ctx.moveTo(p.drawX + 1, p.drawY); // prevent lines from connecting dots
+          ctx.arc(p.drawX, p.drawY, 1, 0, Math.PI * 2);
+        }
+      }
+      ctx.fill();
 
-          const dx = origX - mouse.x;
-          const dy = origY - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          let drawX = origX;
-          let drawY = origY;
-          let dotColor = "rgba(255, 255, 255, 0.05)";
-          let dotSize = 1;
-
-          if (dist < mouse.radius) {
-            const force = (mouse.radius - dist) / mouse.radius;
-            const angle = Math.atan2(dy, dx);
-            drawX += Math.cos(angle) * force * 15;
-            drawY += Math.sin(angle) * force * 15;
-            
-            // Intensify color & size based on proximity
-            dotColor = `rgba(79, 126, 255, ${0.05 + force * 0.35})`;
-            dotSize = 1 + force * 1.5;
-          }
-
-          ctx.fillStyle = dotColor;
+      // Draw only the hovered/warped dots individually
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+        if (p.force > 0) {
+          ctx.fillStyle = `rgba(79, 126, 255, ${0.05 + p.force * 0.35})`;
           ctx.beginPath();
-          ctx.arc(drawX, drawY, dotSize, 0, Math.PI * 2);
+          ctx.arc(p.drawX, p.drawY, 1 + p.force * 1.5, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
       // 4. Draw floating particles
-      particles.forEach((p) => {
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
 
@@ -223,14 +239,14 @@ export default function CanvasBackground() {
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Proximity calculation for glow lines to mouse
-        const dx = p.x - mouse.x;
-        const dy = p.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const dx = p.x - mX;
+        const dy = p.y - mY;
+        const distSq = dx * dx + dy * dy;
 
         let finalAlpha = p.alpha;
-        if (dist < mouse.radius) {
-          const force = (mouse.radius - dist) / mouse.radius;
+        if (distSq < radiusSq) {
+          const dist = Math.sqrt(distSq);
+          const force = (mouseRadius - dist) / mouseRadius;
           finalAlpha = p.alpha + force * 0.4;
         }
 
@@ -238,25 +254,29 @@ export default function CanvasBackground() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
+      }
 
-        // Draw connections for close particles
-        particles.forEach((p2) => {
-          if (p === p2) return;
-          const pdx = p.x - p2.x;
-          const pdy = p.y - p2.y;
-          const pdist = Math.sqrt(pdx * pdx + pdy * pdy);
+      // Draw particle connections (single check per pair, and distance-squared filtered)
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i < particles.length; i++) {
+        const p1 = particles[i];
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const pdx = p1.x - p2.x;
+          const pdy = p1.y - p2.y;
+          const pdistSq = pdx * pdx + pdy * pdy;
 
-          if (pdist < 100) {
-            const alpha = (100 - pdist) / 100 * 0.05;
+          if (pdistSq < 10000) { // 100 * 100 = 10000
+            const pdist = Math.sqrt(pdistSq);
+            const alpha = ((100 - pdist) / 100) * 0.05;
             ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-            ctx.lineWidth = 0.5;
             ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
+            ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.stroke();
           }
-        });
-      });
+        }
+      }
 
       animationFrameId = requestAnimationFrame(render);
     };

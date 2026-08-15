@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion";
 
 export default function TiltCard({
@@ -14,6 +14,7 @@ export default function TiltCard({
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
+  const rectRef = useRef<DOMRect | null>(null);
 
   // Motion values for normalized coordinates (-0.5 to 0.5)
   const x = useMotionValue(0.5);
@@ -32,10 +33,24 @@ export default function TiltCard({
   const spotlightY = useTransform(springY, [0, 1], ["0%", "100%"]);
   const spotlightBg = useMotionTemplate`radial-gradient(400px circle at ${spotlightX} ${spotlightY}, rgba(79, 126, 255, 0.08), transparent 80%)`;
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+  useEffect(() => {
+    const handleScroll = () => {
+      rectRef.current = null;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    const rect = cardRef.current.getBoundingClientRect();
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!rectRef.current) {
+      if (cardRef.current) {
+        rectRef.current = cardRef.current.getBoundingClientRect();
+      } else {
+        return;
+      }
+    }
+
+    const rect = rectRef.current;
     const width = rect.width;
     const height = rect.height;
 
@@ -44,8 +59,8 @@ export default function TiltCard({
     const mouseY = e.clientY - rect.top;
 
     // Normalize coordinates to 0 - 1 range
-    const normX = mouseX / width;
-    const normY = mouseY / height;
+    const normX = mouseX / (width || 1);
+    const normY = mouseY / (height || 1);
 
     x.set(normX);
     y.set(normY);
@@ -53,10 +68,14 @@ export default function TiltCard({
 
   const handleMouseEnter = () => {
     setHovered(true);
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
   };
 
   const handleMouseLeave = () => {
     setHovered(false);
+    rectRef.current = null;
     // Reset to center
     x.set(0.5);
     y.set(0.5);

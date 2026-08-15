@@ -1,43 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
 
 export default function HUDTelemetry() {
   const [activeSection, setActiveSection] = useState("HERO");
-  const [scrollPct, setScrollPct] = useState(0);
-  const [coordY, setCoordY] = useState(0);
-
-  const { scrollYProgress } = useScroll();
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const coordYRef = useRef<HTMLSpanElement>(null);
+  const scrollPctTextRef = useRef<HTMLSpanElement>(null);
+  const scrollProgressBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // 1. Direct DOM scroll telemetry tracker (no React state re-renders on scroll)
     const handleScroll = () => {
       const currentY = window.scrollY;
-      setCoordY(Math.round(currentY));
-
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const pct = Math.min(100, Math.max(0, Math.round((currentY / (docHeight || 1)) * 100)));
-      setScrollPct(pct);
 
-      // Simple boundary checking for active telemetry section
-      const sections = ["hero", "about", "skills", "projects", "timeline", "testimonials", "blog", "contact"];
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          // If the section occupies the center 40% of the viewport
-          if (rect.top <= window.innerHeight * 0.4 && rect.bottom >= window.innerHeight * 0.4) {
-            setActiveSection(section.toUpperCase());
-            break;
-          }
-        }
+      if (coordYRef.current) {
+        coordYRef.current.textContent = `${currentY.toString().padStart(4, "0")} PX`;
+      }
+      if (scrollPctTextRef.current) {
+        scrollPctTextRef.current.textContent = `${pct.toString().padStart(3, "0")}%`;
+      }
+      if (scrollProgressBarRef.current) {
+        scrollProgressBarRef.current.style.height = `${pct}%`;
       }
     };
 
+    // 2. Performant active section tracking via IntersectionObserver (no layout reflows on scroll)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id.toUpperCase());
+          }
+        });
+      },
+      { rootMargin: "-30% 0px -60% 0px" }
+    );
+
+    const sections = ["hero", "about", "skills", "projects", "timeline", "testimonials", "blog", "contact"];
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -56,7 +69,7 @@ export default function HUDTelemetry() {
 
         <div className="flex flex-col gap-1 border-l border-white/10 pl-3">
           <span className="text-white/20 text-[8px]">coordinate y</span>
-          <span>{coordY.toString().padStart(4, "0")} PX</span>
+          <span ref={coordYRef}>0000 PX</span>
         </div>
       </div>
 
@@ -68,15 +81,14 @@ export default function HUDTelemetry() {
           
           <div className="relative w-[1px] h-32 bg-white/10 rounded-full overflow-hidden">
             {/* Glowing progress line indicator */}
-            <motion.div
-              style={{
-                height: `${scrollPct}%`,
-              }}
+            <div
+              ref={scrollProgressBarRef}
+              style={{ height: "0%" }}
               className="absolute top-0 left-0 w-full bg-gradient-to-b from-brand-blue to-brand-purple shadow-[0_0_8px_rgba(79,126,255,0.5)]"
             />
           </div>
           
-          <span className="text-white font-semibold">{scrollPct.toString().padStart(3, "0")}%</span>
+          <span ref={scrollPctTextRef} className="text-white font-semibold">000%</span>
         </div>
 
         <div className="flex flex-col items-center gap-1">
