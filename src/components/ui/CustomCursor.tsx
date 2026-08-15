@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useMotionValue, useSpring, useReducedMotion, AnimatePresence } from "framer-motion";
 
 export default function CustomCursor() {
   const shouldReduceMotion = useReducedMotion();
-  const [hovered, setHovered] = useState(false);
+  const [hoverType, setHoverType] = useState<"none" | "link" | "project">("none");
   const [clicked, setClicked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -44,6 +44,9 @@ export default function CustomCursor() {
     // Listen to hover events for interactable items
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      if (!target) return;
+
+      const projectCard = target.closest("[data-cursor='project']");
       const isInteractable =
         target.tagName === "A" ||
         target.tagName === "BUTTON" ||
@@ -53,7 +56,13 @@ export default function CustomCursor() {
         target.classList.contains("interactive") ||
         target.closest(".interactive") !== null;
 
-      setHovered(isInteractable);
+      if (projectCard) {
+        setHoverType("project");
+      } else if (isInteractable) {
+        setHoverType("link");
+      } else {
+        setHoverType("none");
+      }
     };
 
     window.addEventListener("mousemove", moveCursor);
@@ -80,25 +89,40 @@ export default function CustomCursor() {
     <>
       {/* Outer Ring */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-white/20 pointer-events-none z-[9999] mix-blend-difference hidden md:block"
+        className="fixed top-0 left-0 w-9 h-9 rounded-full border border-white/20 pointer-events-none z-[9999] hidden md:flex items-center justify-center"
         style={{
           x: ringX,
           y: ringY,
           translateX: "-50%",
           translateY: "-50%",
+          mixBlendMode: hoverType === "project" ? "normal" : "difference",
         }}
         animate={{
-          scale: hovered ? 1.8 : clicked ? 0.8 : 1,
-          backgroundColor: hovered ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0)",
-          borderColor: hovered ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.25)",
+          scale: hoverType === "project" ? 1.6 : hoverType === "link" ? 1.3 : clicked ? 0.85 : 1,
+          backgroundColor: hoverType === "project" ? "rgba(197, 168, 128, 1)" : "rgba(255, 255, 255, 0)",
+          borderColor: hoverType === "project" ? "rgba(197, 168, 128, 1)" : hoverType === "link" ? "rgba(197, 168, 128, 0.4)" : "rgba(255, 255, 255, 0.2)",
           opacity: isVisible ? 1 : 0,
         }}
-        transition={{ type: "tween", duration: 0.15 }}
-      />
+        transition={{ type: "spring", stiffness: 280, damping: 26 }}
+      >
+        <AnimatePresence>
+          {hoverType === "project" && (
+            <motion.span
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
+              className="text-[8px] font-mono font-bold tracking-[0.1em] text-black"
+            >
+              VIEW
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
       {/* Inner Dot */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full bg-white pointer-events-none z-[9999] mix-blend-difference hidden md:block"
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full bg-brand-blue pointer-events-none z-[9999] mix-blend-difference hidden md:block"
         style={{
           x: dotX,
           y: dotY,
@@ -106,15 +130,15 @@ export default function CustomCursor() {
           translateY: "-50%",
         }}
         animate={{
-          scale: hovered ? 0.3 : clicked ? 1.5 : 1,
-          opacity: isVisible ? 1 : 0,
+          scale: hoverType === "project" ? 0 : hoverType === "link" ? 0.4 : clicked ? 0.6 : 1,
+          opacity: isVisible && hoverType !== "project" ? 1 : 0,
         }}
         transition={{ type: "tween", duration: 0.1 }}
       />
 
       {/* Cursor spotlight behind elements for modern luxury glowing feels */}
       <motion.div
-        className="fixed top-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none z-[-5] bg-gradient-radial from-brand-blue/5 to-transparent blur-3xl opacity-0 hidden md:block"
+        className="fixed top-0 left-0 w-[300px] h-[300px] rounded-full pointer-events-none z-[-5] bg-gradient-radial from-brand-blue/8 to-transparent blur-3xl opacity-0 hidden md:block"
         style={{
           x: ringX,
           y: ringY,

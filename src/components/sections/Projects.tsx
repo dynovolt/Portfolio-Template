@@ -66,7 +66,7 @@ function ProjectCard({ project, onClick }: { project: Project; onClick: () => vo
   };
 
   return (
-    <TiltCard className="flex flex-col h-full group" maxTilt={8}>
+    <TiltCard className="flex flex-col h-full group" maxTilt={8} data-cursor="project">
       {/* Video / Thumbnail Container */}
       <div
         className="relative h-56 w-full bg-neutral-900 overflow-hidden cursor-pointer"

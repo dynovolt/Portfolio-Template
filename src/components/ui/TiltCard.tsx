@@ -7,10 +7,12 @@ export default function TiltCard({
   children,
   className = "",
   maxTilt = 12, // Maximum rotation in degrees
+  ...props
 }: {
   children: React.ReactNode;
   className?: string;
   maxTilt?: number;
+  [key: string]: any;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
@@ -95,6 +97,7 @@ export default function TiltCard({
       className={`relative glass-card rounded-2xl overflow-hidden cursor-pointer transition-shadow duration-300 ${
         hovered ? "shadow-2xl shadow-brand-blue/5 border-white/10 bg-white/[0.03]" : ""
       } ${className}`}
+      {...props}
     >
       {/* 3D Depth wrapper */}
       <div style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d" }} className="h-full">
