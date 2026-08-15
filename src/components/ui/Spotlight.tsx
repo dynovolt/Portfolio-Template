@@ -5,7 +5,7 @@ import React, { useRef, useState, useEffect } from "react";
 export default function Spotlight({
   children,
   className = "",
-  color = "rgba(79, 126, 255, 0.15)",
+  color = "rgba(197, 168, 128, 0.15)",
 }: {
   children: React.ReactNode;
   className?: string;

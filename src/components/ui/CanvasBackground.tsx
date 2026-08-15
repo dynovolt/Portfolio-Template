@@ -50,7 +50,7 @@ export default function CanvasBackground() {
         vy: (Math.random() - 0.5) * 0.25,
         size: Math.random() * 2 + 1,
         alpha: Math.random() * 0.5 + 0.1,
-        color: Math.random() > 0.5 ? "79, 126, 255" : "139, 92, 246", // Blue or Purple
+        color: Math.random() > 0.5 ? "197, 168, 128" : "230, 213, 195", // Gold or Champagne
       });
     }
 
@@ -124,18 +124,18 @@ export default function CanvasBackground() {
       const blob2X = width * 0.75 + Math.cos(time * 0.9) * 120;
       const blob2Y = height * 0.7 + Math.sin(time * 1.1) * 150;
 
-      // Blob 1 (Electric Blue)
+      // Blob 1 (Electric Blue equivalent -> Gold)
       const grad1 = ctx.createRadialGradient(blob1X, blob1Y, 50, blob1X, blob1Y, 400);
-      grad1.addColorStop(0, "rgba(79, 126, 255, 0.06)");
+      grad1.addColorStop(0, "rgba(197, 168, 128, 0.06)");
       grad1.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = grad1;
       ctx.beginPath();
       ctx.arc(blob1X, blob1Y, 400, 0, Math.PI * 2);
       ctx.fill();
 
-      // Blob 2 (Soft Purple)
+      // Blob 2 (Soft Purple equivalent -> Champagne)
       const grad2 = ctx.createRadialGradient(blob2X, blob2Y, 50, blob2X, blob2Y, 450);
-      grad2.addColorStop(0, "rgba(139, 92, 246, 0.05)");
+      grad2.addColorStop(0, "rgba(230, 213, 195, 0.05)");
       grad2.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = grad2;
       ctx.beginPath();
@@ -220,7 +220,7 @@ export default function CanvasBackground() {
       for (let i = 0; i < points.length; i++) {
         const p = points[i];
         if (p.force > 0) {
-          ctx.fillStyle = `rgba(79, 126, 255, ${0.05 + p.force * 0.35})`;
+          ctx.fillStyle = `rgba(197, 168, 128, ${0.05 + p.force * 0.35})`;
           ctx.beginPath();
           ctx.arc(p.drawX, p.drawY, 1 + p.force * 1.5, 0, Math.PI * 2);
           ctx.fill();

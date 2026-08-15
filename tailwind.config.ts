@@ -9,16 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#030303",
+        background: "#070708",
         foreground: "#ffffff",
         card: {
-          DEFAULT: "#0b0b0f",
-          hover: "#121218",
+          DEFAULT: "#0C0C0E",
+          hover: "#141417",
           border: "rgba(255, 255, 255, 0.08)",
         },
         brand: {
-          blue: "#4F7EFF",
-          purple: "#8B5CF6",
+          blue: "#C5A880",
+          purple: "#E6D5C3",
           grey: {
             50: "#f5f5f5",
             100: "#e5e5e5",

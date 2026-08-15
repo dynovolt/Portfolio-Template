@@ -101,8 +101,8 @@ export default function Footer() {
                   scale: 1.15,
                   y: -15,
                   rotate: Math.random() > 0.5 ? 6 : -6,
-                  color: "#4F7EFF",
-                  textShadow: "0 0 40px rgba(79, 126, 255, 0.8)",
+                  color: "#C5A880",
+                  textShadow: "0 0 40px rgba(197, 168, 128, 0.8)",
                 }}
                 transition={{ type: "spring", stiffness: 350, damping: 10 }}
               >

@@ -82,11 +82,11 @@ body {
 
 /* Custom Text effects */
 .text-glow-blue {
-  text-shadow: 0 0 40px rgba(79, 126, 255, 0.3);
+  text-shadow: 0 0 40px rgba(197, 168, 128, 0.3);
 }
 
 .text-glow-purple {
-  text-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+  text-shadow: 0 0 40px rgba(230, 213, 195, 0.3);
 }
 
 /* Premium Gradients */
@@ -97,11 +97,11 @@ body {
 }
 
 .gradient-accent {
-  background: linear-gradient(135deg, #4F7EFF 0%, #8B5CF6 100%);
+  background: linear-gradient(135deg, #C5A880 0%, #E6D5C3 100%);
 }
 
 .gradient-accent-text {
-  background: linear-gradient(135deg, #ffffff 40%, #4F7EFF 70%, #8B5CF6 100%);
+  background: linear-gradient(135deg, #ffffff 40%, #C5A880 70%, #E6D5C3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -115,7 +115,7 @@ body {
   content: "";
   position: absolute;
   inset: -1px;
-  background: linear-gradient(90deg, #4F7EFF, #8B5CF6, #4F7EFF);
+  background: linear-gradient(90deg, #C5A880, #E6D5C3, #C5A880);
   background-size: 200% 200%;
   border-radius: inherit;
   z-index: -1;

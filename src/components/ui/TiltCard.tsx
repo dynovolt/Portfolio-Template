@@ -31,7 +31,7 @@ export default function TiltCard({
   // Transform for cursor spotlight position on the card surface
   const spotlightX = useTransform(springX, [0, 1], ["0%", "100%"]);
   const spotlightY = useTransform(springY, [0, 1], ["0%", "100%"]);
-  const spotlightBg = useMotionTemplate`radial-gradient(400px circle at ${spotlightX} ${spotlightY}, rgba(79, 126, 255, 0.08), transparent 80%)`;
+  const spotlightBg = useMotionTemplate`radial-gradient(400px circle at ${spotlightX} ${spotlightY}, rgba(197, 168, 128, 0.08), transparent 80%)`;
 
   useEffect(() => {
     const handleScroll = () => {
